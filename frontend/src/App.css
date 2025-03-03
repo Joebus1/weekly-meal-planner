@@ -1,54 +1,88 @@
-/* Main app container styles */
+/* Main app container styles with a refined dark theme */
 .App {
-  background-color: rgb(2, 45, 59); /* Dark teal background */
+  background: linear-gradient(135deg, rgb(2, 45, 59), rgb(5, 35, 45)); /* Dark teal gradient for depth */
   min-height: 100vh;                /* Full viewport height */
   padding: 20px;                    /* Spacing around content */
-  color: #ffffff;                   /* Default text color to white */
+  color: #ffffff;                   /* Default text color: white for contrast */
+  font-family: 'Arial', sans-serif; /* Clean, modern font */
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3); /* Subtle inner shadow for depth */
 }
 
-/* Title heading */
+/* Title heading with a gradient effect */
 h1 {
-  color: #3a46f3;                   /* Blue for the title */
+  color: #3a46f3;                   /* Bright blue for titles */
+  background: linear-gradient(45deg, #3a46f3, #5d6aff); /* Gradient for title */
+  -webkit-background-clip: text;    /* Clip gradient to text */
+  background-clip: text;            /* Clip gradient to text */
+  color: transparent;               /* Make text transparent to show gradient */
+  text-align: center;               /* Center title */
+  margin-bottom: 20px;              /* Space below title */
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* Subtle text shadow */
 }
 
-/* Button styles */
+/* Button styles with a modern dark theme */
 button {
   margin-left: 10px;
-  padding: 5px 10px;
-  color: #ffffff;                   /* White text for buttons */
-  background-color: #3a46f3;        /* Blue background to match title */
+  padding: 8px 16px;                /* Increased padding for better touch targets */
+  color: #ffffff;                   /* White text for contrast */
+  background: linear-gradient(135deg, #3a46f3, #5d6aff); /* Blue gradient for buttons */
   border: none;                     /* Remove default border */
+  border-radius: 5px;               /* Rounded corners for a modern look */
   cursor: pointer;                  /* Pointer cursor on hover */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
+  transition: background 0.3s, transform 0.2s; /* Smooth transitions */
 }
 
-/* Input and select field styles for better visibility */
+button:hover {
+  background: linear-gradient(135deg, #5d6aff, #3a46f3); /* Shift gradient on hover */
+  transform: translateY(-2px);      /* Slight lift for interactivity */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Enhanced shadow on hover */
+}
+
+button:active {
+  transform: translateY(0);         /* Reset lift on click */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* Reduced shadow on click */
+}
+
+/* Input and select field styles with a dark theme */
 input, select {
-  background-color: #333;           /* Dark gray background */
+  background-color: #222831;        /* Darker gray background for inputs/selects */
   color: #ffffff;                   /* White text */
-  border: 1px solid #555;           /* Subtle border */
-  padding: 5px;                     /* Spacing inside inputs/selects */
+  border: 1px solid #3c4a5a;        /* Darker border for contrast */
+  border-radius: 4px;               /* Rounded corners */
+  padding: 8px;                     /* Increased padding for better usability */
   margin-left: 5px;                 /* Spacing to the left of inputs/selects */
+  transition: border-color 0.3s, background-color 0.3s; /* Smooth transitions */
 }
 
-/* Label styles */
+input:focus, select:focus {
+  outline: none;                    /* Remove default outline */
+  border-color: #5d6aff;            /* Blue border on focus */
+  background-color: #2d3642;        /* Slightly lighter gray on focus */
+  box-shadow: 0 0 5px rgba(93, 106, 255, 0.5); /* Glow effect on focus */
+}
+
+/* Label styles with subtle enhancements */
 label {
   margin-right: 10px;               /* Spacing between labels */
+  color: #a8b2c1;                   /* Light gray for labels, less prominent than main text */
+  font-weight: 500;                 /* Slightly bolder for readability */
 }
 
 /* Style "Buy" links in the shopping list */
 .App ul li a {
   color: #61fbae;                   /* Light green for "Buy" links */
   text-decoration: none;            /* Remove underline */
+  transition: color 0.3s;           /* Smooth color transition */
 }
 
-/* Ensure the link stays light green when visited or hovered */
 .App ul li a:visited {
   color: #61fbae;                   /* Light green for visited links */
 }
 
 .App ul li a:hover {
-  color: #61fbae;                   /* Light green on hover */
-  text-decoration: underline;       /* Optional: Add underline on hover for interactivity */
+  color: #8cffb4;                   /* Slightly lighter green on hover */
+  text-decoration: underline;       /* Underline on hover for interactivity */
 }
 
 /* Calendar layout for meal plan */
@@ -64,17 +98,24 @@ label {
 .meal-day {
   flex: 1;                          /* Equal width for each day, but allow shrinking */
   min-width: 150px;                 /* Minimum width for each day column */
-  background-color: #333;           /* Dark gray background for each day */
-  padding: 10px;                    /* Padding inside each day column */
-  border-radius: 5px;               /* Rounded corners for a card-like look */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  background: linear-gradient(135deg, #2d3642, #222831); /* Dark gradient for days */
+  padding: 15px;                    /* Increased padding for better spacing */
+  border-radius: 8px;               /* Larger rounded corners for a modern look */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* Enhanced shadow for depth */
+  transition: transform 0.3s, box-shadow 0.3s; /* Smooth transitions */
+}
+
+.meal-day:hover {
+  transform: translateY(-2px);      /* Slight lift on hover */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5); /* Enhanced shadow on hover */
 }
 
 /* Day titles (e.g., Monday, Tuesday) */
 .meal-day h3 {
   color: #3a46f3;                   /* Blue for day names, matching the title */
-  margin-bottom: 10px;              /* Space below day name */
+  margin-bottom: 15px;              /* Increased space below day name */
   text-align: center;               /* Center day names */
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* Subtle text shadow */
 }
 
 /* Meal list styles within each day */
@@ -89,9 +130,11 @@ label {
   text-decoration: none;            /* Remove underline */
   margin-left: 5px;                 /* Space before the link */
   cursor: pointer;                  /* Pointer cursor to indicate interactivity */
+  transition: color 0.3s;           /* Smooth color transition */
 }
 
 .recipe-link:hover {
+  color: #8cffb4;                   /* Slightly lighter green on hover */
   text-decoration: underline;       /* Underline on hover for interactivity */
 }
 
@@ -103,28 +146,42 @@ label {
 }
 
 .shopping-list li {
-  background-color: #333;           /* Dark gray background for list items */
-  padding: 10px;                    /* Padding inside each list item */
-  margin-bottom: 10px;              /* Space between list items */
-  border-radius: 5px;               /* Rounded corners for consistency */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  background: linear-gradient(135deg, #2d3642, #222831); /* Dark gradient for list items */
+  padding: 12px;                    /* Increased padding for better spacing */
+  margin-bottom: 15px;              /* Increased space between list items */
+  border-radius: 8px;               /* Larger rounded corners */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* Enhanced shadow for depth */
+  transition: transform 0.3s, box-shadow 0.3s; /* Smooth transitions */
+}
+
+.shopping-list li:hover {
+  transform: translateY(-2px);      /* Slight lift on hover */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5); /* Enhanced shadow on hover */
 }
 
 .shopping-list .error-message {
   color: #ff4444;                   /* Red for error messages to stand out */
+  font-weight: 600;                 /* Slightly bolder for emphasis */
 }
 
 /* Total price styling */
 .total-price {
   margin-top: 20px;                 /* Space above the total */
-  background-color: #333;           /* Dark gray background */
+  background: linear-gradient(135deg, #2d3642, #222831); /* Dark gradient for total box */
   padding: 15px;                    /* Padding inside the total box */
-  border-radius: 5px;               /* Rounded corners */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  border-radius: 8px;               /* Larger rounded corners */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* Enhanced shadow */
+  transition: transform 0.3s, box-shadow 0.3s; /* Smooth transitions */
+}
+
+.total-price:hover {
+  transform: translateY(-2px);      /* Slight lift on hover */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5); /* Enhanced shadow on hover */
 }
 
 .total-price h3 {
   color: #3a46f3;                   /* Blue for total price, matching day names and title */
   margin: 0;                        /* Remove default margin */
   text-align: center;               /* Center the total price */
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* Subtle text shadow */
 }

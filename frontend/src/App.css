@@ -11,7 +11,7 @@
 /* Title heading with a gradient effect */
 h1 {
   color: #3a46f3;                   /* Bright blue for titles */
-  background: linear-gradient(45deg, #3a46f3, #5d6aff); /* Gradient for title */
+  background: linear-gradient(45deg, #919191, #c0c0c0); /* Gradient for title */
   -webkit-background-clip: text;    /* Clip gradient to text */
   background-clip: text;            /* Clip gradient to text */
   color: transparent;               /* Make text transparent to show gradient */
@@ -20,7 +20,7 @@ h1 {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* Subtle text shadow */
 }
 
-/* Button styles with a modern dark theme */
+/* Button styles with a modern dark theme (including toggle buttons) */
 button {
   margin-left: 10px;
   padding: 8px 16px;                /* Increased padding for better touch targets */
@@ -42,6 +42,13 @@ button:hover {
 button:active {
   transform: translateY(0);         /* Reset lift on click */
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* Reduced shadow on click */
+}
+
+/* Toggle buttons (specific styling for recipe/ingredient buttons) */
+.toggle-button {
+  margin-top: 5px;
+  padding: 6px 12px;                /* Slightly smaller for inline use */
+  font-size: 0.9em;                 /* Smaller text for buttons */
 }
 
 /* Input and select field styles with a dark theme */
@@ -112,7 +119,7 @@ label {
 
 /* Day titles (e.g., Monday, Tuesday) */
 .meal-day h3 {
-  color: #3a46f3;                   /* Blue for day names, matching the title */
+  color: #9b9b9b;                   /* Blue for day names, matching the title */
   margin-bottom: 15px;              /* Increased space below day name */
   text-align: center;               /* Center day names */
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* Subtle text shadow */
@@ -124,12 +131,62 @@ label {
   padding-left: 0;                  /* Remove default padding */
 }
 
-/* Recipe link placeholder style (now for <span> instead of <a>) */
+/* Recipe card styling for each meal */
+.recipe-card {
+  margin-top: 10px;                 /* Space above each recipe card */
+  background: linear-gradient(135deg, #2d3642, #222831); /* Dark gradient for recipe cards */
+  padding: 10px;                    /* Padding inside recipe card */
+  border-radius: 6px;               /* Rounded corners */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+  transition: transform 0.3s, box-shadow 0.3s; /* Smooth transitions */
+}
+
+.recipe-card:hover {
+  transform: translateY(-2px);      /* Slight lift on hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Enhanced shadow on hover */
+}
+
+.recipe-card h4 {
+  color: #888888;                   /* Blue for recipe names */
+  margin-bottom: 5px;               /* Space below recipe name */
+}
+
+/* Recipe text styling */
+.recipe-text {
+  margin-top: 5px;                  /* Space above recipe text */
+  line-height: 1.5;                 /* Better readability */
+  color: #a8b2c1;                   /* Light gray for secondary text */
+  max-height: 0;                    /* Hidden by default */
+  overflow: hidden;                 /* Hide overflow when collapsed */
+  transition: max-height 0.3s ease-in-out; /* Smooth expand/hide animation */
+}
+
+.recipe-text.expanded {
+  max-height: 1000px;               /* Ensure all content shows */
+  overflow: auto;                   /* Allow scrolling if content exceeds height */
+}
+
+/* Ingredient list styling */
+.ingredient-list {
+  margin-top: 5px;                  /* Space above ingredient list */
+  list-style-type: none;            /* Remove default bullet points */
+  padding-left: 0;                  /* Remove default padding */
+  color: #a8b2c1;                   /* Light gray for ingredients */
+  max-height: 0;                    /* Hidden by default */
+  overflow: hidden;                 /* Hide overflow when collapsed */
+  transition: max-height 0.3s ease-in-out; /* Smooth expand/hide animation */
+}
+
+.ingredient-list.expanded {
+  max-height: 500px;                /* Ensure all content shows */
+  overflow: auto;                   /* Allow scrolling if content exceeds height */
+}
+
+/* Recipe link styling */
 .recipe-link {
   color: #61fbae;                   /* Light green for recipe links */
   text-decoration: none;            /* Remove underline */
   margin-left: 5px;                 /* Space before the link */
-  cursor: pointer;                  /* Pointer cursor to indicate interactivity */
   transition: color 0.3s;           /* Smooth color transition */
 }
 
@@ -180,7 +237,7 @@ label {
 }
 
 .total-price h3 {
-  color: #3a46f3;                   /* Blue for total price, matching day names and title */
+  color: #a0a0a0;                   /* Blue for total price, matching day names and title */
   margin: 0;                        /* Remove default margin */
   text-align: center;               /* Center the total price */
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* Subtle text shadow */

@@ -37,13 +37,13 @@ label {
 
 /* Style "Buy" links in the shopping list */
 .App ul li a {
-  color: #0190c9;                   /* Light green for "Buy" links */
+  color: #61fbae;                   /* Light green for "Buy" links */
   text-decoration: none;            /* Remove underline */
 }
 
 /* Ensure the link stays light green when visited or hovered */
 .App ul li a:visited {
-  color: #58bcff;                   /* Light green for visited links */
+  color: #61fbae;                   /* Light green for visited links */
 }
 
 .App ul li a:hover {
@@ -72,7 +72,7 @@ label {
 
 /* Day titles (e.g., Monday, Tuesday) */
 .meal-day h3 {
-  color: #8e8f8f;                   /* Blue for day names, matching the title */
+  color: #3a46f3;                   /* Blue for day names, matching the title */
   margin-bottom: 10px;              /* Space below day name */
   text-align: center;               /* Center day names */
 }
@@ -83,13 +83,48 @@ label {
   padding-left: 0;                  /* Remove default padding */
 }
 
-/* Recipe link placeholder style */
+/* Recipe link placeholder style (now for <span> instead of <a>) */
 .recipe-link {
   color: #61fbae;                   /* Light green for recipe links */
   text-decoration: none;            /* Remove underline */
   margin-left: 5px;                 /* Space before the link */
+  cursor: pointer;                  /* Pointer cursor to indicate interactivity */
 }
 
 .recipe-link:hover {
   text-decoration: underline;       /* Underline on hover for interactivity */
+}
+
+/* Shopping list styles */
+.shopping-list {
+  list-style-type: none;            /* Remove default bullet points */
+  padding-left: 0;                  /* Remove default padding */
+  margin-top: 20px;                 /* Space above the list */
+}
+
+.shopping-list li {
+  background-color: #333;           /* Dark gray background for list items */
+  padding: 10px;                    /* Padding inside each list item */
+  margin-bottom: 10px;              /* Space between list items */
+  border-radius: 5px;               /* Rounded corners for consistency */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+}
+
+.shopping-list .error-message {
+  color: #ff4444;                   /* Red for error messages to stand out */
+}
+
+/* Total price styling */
+.total-price {
+  margin-top: 20px;                 /* Space above the total */
+  background-color: #333;           /* Dark gray background */
+  padding: 15px;                    /* Padding inside the total box */
+  border-radius: 5px;               /* Rounded corners */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
+.total-price h3 {
+  color: #3a46f3;                   /* Blue for total price, matching day names and title */
+  margin: 0;                        /* Remove default margin */
+  text-align: center;               /* Center the total price */
 }

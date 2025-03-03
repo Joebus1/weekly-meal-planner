@@ -3,8 +3,8 @@ import axios from 'axios';
 
 const MealPlan = () => {
   const [nights, setNights] = useState(1);
-  const [mealStyle, setMealStyle] = useState('Italian'); // Default style
-  const [healthOption, setHealthOption] = useState('Regular'); // Default health option
+  const [mealStyle, setMealStyle] = useState('Any'); // Default to "Any" for random styles
+  const [healthOption, setHealthOption] = useState('Any'); // Default to "Any" for random health options
   const [mealPlan, setMealPlan] = useState([]);
   const [shoppingList, setShoppingList] = useState([]);
 
@@ -16,8 +16,8 @@ const MealPlan = () => {
     try {
       const response = await axios.post('http://localhost:5000/api/generate-meal-plan', {
         nights,
-        style: mealStyle,               // Send style preference to backend
-        health: healthOption,           // Send health preference to backend
+        style: mealStyle,               // Send style preference (including "Any") to backend
+        health: healthOption,           // Send health preference (including "Any") to backend
       });
       const meals = response.data;
 
@@ -32,10 +32,48 @@ const MealPlan = () => {
       }
 
       setMealPlan(weeklyPlan);
+
+      // Fetch product data for ingredients and aggregate quantities
+      const allIngredients = meals.flatMap(meal => meal.ingredients);
+      const ingredientCount = {}; // Track quantity of each ingredient
+      allIngredients.forEach(ingredient => {
+        ingredientCount[ingredient] = (ingredientCount[ingredient] || 0) + 1; // Increment count
+      });
+
+      // Fetch product details and add units
+      const shoppingListData = await Promise.all(
+        Object.keys(ingredientCount).map(async (ingredient) => { // Added parentheses for clarity
+          const response = await axios.get(`http://localhost:5000/api/products/${ingredient}`);
+          const product = response.data;
+          if (!product.error) {
+            // Add units based on common grocery item assumptions (customize as needed)
+            let unit = 'unit'; // Default unit
+            if (ingredient === 'pasta' || ingredient === 'rice') unit = 'lbs';
+            if (ingredient === 'sauce' || ingredient === 'dressing' || ingredient === 'salsa' || ingredient === 'soy sauce') unit = 'ozs';
+            if (ingredient === 'beef') unit = 'lbs';
+            if (ingredient === 'lettuce' || ingredient === 'tomato' || ingredient === 'broccoli') unit = 'unit';
+
+            return {
+              name: product.name,
+              qty: ingredientCount[ingredient], // Number of times the ingredient appears
+              unit, // Add unit (e.g., lbs, ozs)
+              price: product.price * ingredientCount[ingredient], // Total price for this ingredient
+              link: product.link
+            };
+          }
+          return { error: `Not found in stock: ${ingredient}` }; // Added semicolon
+        })
+      );
+      setShoppingList(shoppingListData.filter(item => item)); // Remove any undefined items
     } catch (error) {
       console.error('Error:', error);
     }
   };
+
+  // Calculate total price for the week
+  const totalPrice = shoppingList.reduce((total, item) => {
+    return item.error ? total : total + (item.price || 0);
+  }, 0);
 
   return (
     <div className="App">
@@ -53,7 +91,7 @@ const MealPlan = () => {
           />
         </label>
 
-        {/* Meal style selection */}
+        {/* Meal style selection with "Any" option */}
         <label style={{ marginRight: '10px' }}>
           Meal Style:
           <select
@@ -61,13 +99,14 @@ const MealPlan = () => {
             onChange={(e) => setMealStyle(e.target.value)}
             style={{ marginLeft: '5px', padding: '5px' }}
           >
+            <option value="Any">Any</option>    {/* Added "Any" option for random styles */}
             <option value="Italian">Italian</option>
             <option value="Mexican">Mexican</option>
             <option value="Healthy">Healthy</option>
           </select>
         </label>
 
-        {/* Health option selection */}
+        {/* Health option selection with "Any" option */}
         <label>
           Health Option:
           <select
@@ -75,6 +114,7 @@ const MealPlan = () => {
             onChange={(e) => setHealthOption(e.target.value)}
             style={{ marginLeft: '5px', padding: '5px' }}
           >
+            <option value="Any">Any</option>    {/* Added "Any" option for random health options */}
             <option value="Regular">Regular</option>
             <option value="Low-Carb">Low-Carb</option>
             <option value="Vegetarian">Vegetarian</option>
@@ -96,10 +136,10 @@ const MealPlan = () => {
                     {mealPlan[day].map((meal, mealIndex) => (
                       <li key={mealIndex}>
                         {meal.name} - Ingredients: {meal.ingredients.join(', ')} - Style: {meal.style}
-                        {/* Placeholder for future recipe link */}
-                        <a href="#" className="recipe-link" onClick={(e) => e.preventDefault()}>
+                        {/* Placeholder for future recipe link (using span instead of a for accessibility) */}
+                        <span className="recipe-link">
                           [Link to Recipe - Coming Soon]
-                        </a>
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -114,23 +154,30 @@ const MealPlan = () => {
       {shoppingList.length > 0 && (
         <div>
           <h2>Shopping List:</h2>
-          <ul>
+          <ul className="shopping-list">
             {shoppingList.map((item, index) => (
               <li key={index}>
-                {item.error ? `${item.error}` : `${item.name} - Qty: ${item.qty}, Price: $${item.price}, Link: `}
-                {!item.error && (
-                  <a 
-                    href={item.link} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="App-link"
-                  >
-                    Buy
-                  </a>
+                {item.error ? (
+                  <span className="error-message">{item.error}</span>
+                ) : (
+                  <>
+                    {item.qty} {item.unit} {item.name} - Price: $${item.price.toFixed(2)}, 
+                    <a 
+                      href={item.link} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="App-link"
+                    >
+                      Buy
+                    </a>
+                  </>
                 )}
               </li>
             ))}
           </ul>
+          <div className="total-price">
+            <h3>Total Price for the Week: $${totalPrice.toFixed(2)}</h3>
+          </div>
         </div>
       )}
     </div>

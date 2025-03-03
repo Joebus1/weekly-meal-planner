@@ -19,8 +19,8 @@ const generateMealPlan = (nights, style, health) => {
   for (let i = 0; i < nights; i++) {
     // Filter recipes based on style and health preferences
     const filteredRecipes = recipes.filter(recipe => 
-      (style === 'Any' || recipe.style === style) && 
-      (health === 'Any' || recipe.health === health)
+      (style === 'Any' || recipe.style === style) && // Include all styles if "Any" is selected
+      (health === 'Any' || recipe.health === health) // Include all health options if "Any" is selected
     );
     if (filteredRecipes.length === 0) {
       return []; // No recipes match the criteria

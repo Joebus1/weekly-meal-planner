@@ -1,0 +1,95 @@
+/* Main app container styles */
+.App {
+  background-color: rgb(2, 45, 59); /* Dark teal background */
+  min-height: 100vh;                /* Full viewport height */
+  padding: 20px;                    /* Spacing around content */
+  color: #ffffff;                   /* Default text color to white */
+}
+
+/* Title heading */
+h1 {
+  color: #3a46f3;                   /* Blue for the title */
+}
+
+/* Button styles */
+button {
+  margin-left: 10px;
+  padding: 5px 10px;
+  color: #ffffff;                   /* White text for buttons */
+  background-color: #3a46f3;        /* Blue background to match title */
+  border: none;                     /* Remove default border */
+  cursor: pointer;                  /* Pointer cursor on hover */
+}
+
+/* Input and select field styles for better visibility */
+input, select {
+  background-color: #333;           /* Dark gray background */
+  color: #ffffff;                   /* White text */
+  border: 1px solid #555;           /* Subtle border */
+  padding: 5px;                     /* Spacing inside inputs/selects */
+  margin-left: 5px;                 /* Spacing to the left of inputs/selects */
+}
+
+/* Label styles */
+label {
+  margin-right: 10px;               /* Spacing between labels */
+}
+
+/* Style "Buy" links in the shopping list */
+.App ul li a {
+  color: #0190c9;                   /* Light green for "Buy" links */
+  text-decoration: none;            /* Remove underline */
+}
+
+/* Ensure the link stays light green when visited or hovered */
+.App ul li a:visited {
+  color: #58bcff;                   /* Light green for visited links */
+}
+
+.App ul li a:hover {
+  color: #61fbae;                   /* Light green on hover */
+  text-decoration: underline;       /* Optional: Add underline on hover for interactivity */
+}
+
+/* Calendar layout for meal plan */
+.meal-calendar {
+  display: flex;                    /* Use flexbox for horizontal layout */
+  flex-wrap: wrap;                  /* Allow wrapping on smaller screens */
+  gap: 20px;                        /* Space between day columns */
+  justify-content: flex-start;      /* Align days to the left */
+  margin-top: 20px;                 /* Space above the calendar */
+}
+
+/* Individual day column */
+.meal-day {
+  flex: 1;                          /* Equal width for each day, but allow shrinking */
+  min-width: 150px;                 /* Minimum width for each day column */
+  background-color: #333;           /* Dark gray background for each day */
+  padding: 10px;                    /* Padding inside each day column */
+  border-radius: 5px;               /* Rounded corners for a card-like look */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+}
+
+/* Day titles (e.g., Monday, Tuesday) */
+.meal-day h3 {
+  color: #8e8f8f;                   /* Blue for day names, matching the title */
+  margin-bottom: 10px;              /* Space below day name */
+  text-align: center;               /* Center day names */
+}
+
+/* Meal list styles within each day */
+.meal-day ul {
+  list-style-type: none;            /* Remove default bullet points */
+  padding-left: 0;                  /* Remove default padding */
+}
+
+/* Recipe link placeholder style */
+.recipe-link {
+  color: #61fbae;                   /* Light green for recipe links */
+  text-decoration: none;            /* Remove underline */
+  margin-left: 5px;                 /* Space before the link */
+}
+
+.recipe-link:hover {
+  text-decoration: underline;       /* Underline on hover for interactivity */
+}

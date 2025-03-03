@@ -13,9 +13,9 @@ const MealPlan = () => {
   // Days of the week, starting with Monday
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-  // Initialize visibility states when mealPlan or nights changes
+  // Initialize visibility states when mealPlan, nights, or daysOfWeek changes
   useEffect(() => {
-    console.log('Initializing visibility states:', { nights, mealPlan });
+    console.log('Initializing visibility states:', { nights, mealPlan, daysOfWeek });
     const initialRecipeText = {};
     const initialIngredients = {};
     daysOfWeek.slice(0, Math.min(nights, 7)).forEach((day, dayIndex) => {
@@ -29,7 +29,7 @@ const MealPlan = () => {
     });
     setShowRecipeText(initialRecipeText);
     setShowIngredients(initialIngredients);
-  }, [mealPlan, nights]); // Re-run when mealPlan or nights changes
+  }, [mealPlan, nights, daysOfWeek]); // Correct dependency array
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,8 +40,6 @@ const MealPlan = () => {
         health: healthOption,           // Send health preference (including "Any") to backend
       });
       const meals = response.data;
-
-      console.log('Meal Plan:', meals); // Log the meals data before distributing
 
       // Distribute meals across days (up to 7 days max)
       const weeklyPlan = {};
@@ -99,20 +97,23 @@ const MealPlan = () => {
 
   // Toggle visibility for recipe text per day-meal
   const toggleRecipeText = (key) => {
-    console.log('Toggling Recipe Text for key:', key, 'Current state:', showRecipeText[key]);
     setShowRecipeText(prev => ({
       ...prev,
       [key]: !prev[key]
-    }));
+    })); // Simplified to implicit return with braces
   };
 
   // Toggle visibility for ingredients per day-meal
   const toggleIngredients = (key) => {
-    console.log('Toggling Ingredients for key:', key, 'Current state:', showIngredients[key]);
     setShowIngredients(prev => ({
       ...prev,
       [key]: !prev[key]
-    }));
+    })); // Simplified to implicit return with braces
+  };
+
+  // Function to open URL in a new tab
+  const handleOpenUrl = (url) => {
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -202,15 +203,14 @@ const MealPlan = () => {
                           ))}
                         </ul>
                       )}
-                      {/* Link to recipe card */}
-                      <a 
-                        href={meal.recipeUrl} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="recipe-link"
+                      {/* Button for recipe card (replacing link) */}
+                      <button 
+                        onClick={() => handleOpenUrl(meal.recipeUrl)}
+                        className="recipe-link-button"
+                        aria-label={`View recipe card for ${meal.name}`}
                       >
                         View Recipe Card
-                      </a>
+                      </button>
                     </div>
                   ))
                 ) : (
@@ -232,14 +232,13 @@ const MealPlan = () => {
                 ) : (
                   <>
                     {item.qty} {item.unit} {item.name} - Price: $${item.price.toFixed(2)}, 
-                    <a 
-                      href={item.link} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="App-link"
+                    <button 
+                      onClick={() => handleOpenUrl(item.link)}
+                      className="buy-button"
+                      aria-label={`Buy ${item.name} at Walmart`}
                     >
                       Buy
-                    </a>
+                    </button>
                   </>
                 )}
               </li>

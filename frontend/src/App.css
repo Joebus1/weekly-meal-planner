@@ -76,18 +76,40 @@ label {
   font-weight: 500;                 /* Slightly bolder for readability */
 }
 
-/* Style "Buy" links in the shopping list */
-.App ul li a {
-  color: #61fbae;                   /* Light green for "Buy" links */
-  text-decoration: none;            /* Remove underline */
+/* Style "Buy" buttons (replaces buy links) */
+.buy-button {
+  color: #61fbae;                   /* Light green for buy button, matching old link */
+  background: none;                 /* No background for button-like link */
+  border: none;                     /* Remove default border */
+  padding: 0;                       /* No padding to match link appearance */
+  margin-left: 5px;                 /* Space before the button */
+  cursor: pointer;                  /* Pointer cursor to indicate interactivity */
+  font-size: inherit;               /* Match surrounding text size */
+  text-decoration: none;            /* Remove underline by default */
+  display: inline-block;            /* Ensure button is visible and inline */
   transition: color 0.3s;           /* Smooth color transition */
 }
 
-.App ul li a:visited {
-  color: #61fbae;                   /* Light green for visited links */
+.buy-button:hover {
+  color: #8cffb4;                   /* Slightly lighter green on hover */
+  text-decoration: underline;       /* Underline on hover for interactivity */
 }
 
-.App ul li a:hover {
+/* Recipe link button styling (replaces recipe link) */
+.recipe-link-button {
+  color: #61fbae;                   /* Light green for recipe button, matching old link */
+  background: none;                 /* No background for button-like link */
+  border: none;                     /* Remove default border */
+  padding: 0;                       /* No padding to match link appearance */
+  margin-left: 5px;                 /* Space before the button */
+  cursor: pointer;                  /* Pointer cursor to indicate interactivity */
+  font-size: inherit;               /* Match surrounding text size */
+  text-decoration: none;            /* Remove underline by default */
+  display: inline-block;            /* Ensure button is visible and inline */
+  transition: color 0.3s;           /* Smooth color transition */
+}
+
+.recipe-link-button:hover {
   color: #8cffb4;                   /* Slightly lighter green on hover */
   text-decoration: underline;       /* Underline on hover for interactivity */
 }
@@ -162,7 +184,7 @@ label {
 }
 
 .recipe-text.expanded {
-  max-height: 1000px;               /* Ensure all content shows */
+  max-height: 1000px;               /* Larger max-height to ensure all content shows */
   overflow: auto;                   /* Allow scrolling if content exceeds height */
 }
 
@@ -178,21 +200,8 @@ label {
 }
 
 .ingredient-list.expanded {
-  max-height: 500px;                /* Ensure all content shows */
+  max-height: 500px;                /* Larger max-height for ingredients */
   overflow: auto;                   /* Allow scrolling if content exceeds height */
-}
-
-/* Recipe link styling */
-.recipe-link {
-  color: #61fbae;                   /* Light green for recipe links */
-  text-decoration: none;            /* Remove underline */
-  margin-left: 5px;                 /* Space before the link */
-  transition: color 0.3s;           /* Smooth color transition */
-}
-
-.recipe-link:hover {
-  color: #8cffb4;                   /* Slightly lighter green on hover */
-  text-decoration: underline;       /* Underline on hover for interactivity */
 }
 
 /* Shopping list styles */

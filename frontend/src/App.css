@@ -20,7 +20,7 @@ h1 {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* Subtle text shadow */
 }
 
-/* Button styles with a modern dark theme */
+/* Button styles with a modern dark theme (for "Generate Meal Plan" and "Buy" buttons) */
 button {
   margin-left: 10px;
   padding: 8px 16px;                /* Increased padding for better touch targets */
@@ -42,6 +42,13 @@ button:hover {
 button:active {
   transform: translateY(0);         /* Reset lift on click */
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* Reduced shadow on click */
+}
+
+/* Specific styles for "Buy" buttons in the shopping list */
+.buy-button {
+  margin-left: 5px;                 /* Space before the button, matching link spacing */
+  padding: 6px 12px;                /* Slightly smaller padding for inline fit */
+  font-size: 0.9em;                 /* Slightly smaller font for consistency with link size */
 }
 
 /* Input and select field styles with a dark theme */
@@ -67,22 +74,6 @@ label {
   margin-right: 10px;               /* Spacing between labels */
   color: #a8b2c1;                   /* Light gray for labels, less prominent than main text */
   font-weight: 500;                 /* Slightly bolder for readability */
-}
-
-/* Style "Buy" links in the shopping list */
-.App ul li a {
-  color: #61fbae;                   /* Light green for "Buy" links */
-  text-decoration: none;            /* Remove underline */
-  transition: color 0.3s;           /* Smooth color transition */
-}
-
-.App ul li a:visited {
-  color: #61fbae;                   /* Light green for visited links */
-}
-
-.App ul li a:hover {
-  color: #8cffb4;                   /* Slightly lighter green on hover */
-  text-decoration: underline;       /* Underline on hover for interactivity */
 }
 
 /* Calendar layout for meal plan */

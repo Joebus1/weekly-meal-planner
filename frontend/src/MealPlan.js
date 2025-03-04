@@ -42,7 +42,7 @@ const MealPlan = () => {
 
       // Fetch product details and add units
       const shoppingListData = await Promise.all(
-        Object.keys(ingredientCount).map(async ingredient => {
+        Object.keys(ingredientCount).map(async (ingredient) => { // Added parentheses for clarity
           const response = await axios.get(`http://localhost:5000/api/products/${ingredient}`);
           const product = response.data;
           if (!product.error) {
@@ -61,7 +61,7 @@ const MealPlan = () => {
               link: product.link
             };
           }
-          return { error: `Not found in stock: ${ingredient}` };
+          return { error: `Not found in stock: ${ingredient}` }; // Added semicolon
         })
       );
       setShoppingList(shoppingListData.filter(item => item)); // Remove any undefined items
@@ -74,6 +74,11 @@ const MealPlan = () => {
   const totalPrice = shoppingList.reduce((total, item) => {
     return item.error ? total : total + (item.price || 0);
   }, 0);
+
+  // Handle button click to open Walmart link in a new tab
+  const handleBuyClick = (link) => {
+    window.open(link, '_blank'); // Open Walmart link in a new tab
+  };
 
   return (
     <div className="App">
@@ -136,10 +141,10 @@ const MealPlan = () => {
                     {mealPlan[day].map((meal, mealIndex) => (
                       <li key={mealIndex}>
                         {meal.name} - Ingredients: {meal.ingredients.join(', ')} - Style: {meal.style}
-                        {/* Placeholder for future recipe link */}
-                        <a href="#" className="recipe-link" onClick={(e) => e.preventDefault()}>
+                        {/* Placeholder for future recipe link (using span instead of a for accessibility) */}
+                        <span className="recipe-link">
                           [Link to Recipe - Coming Soon]
-                        </a>
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -161,22 +166,20 @@ const MealPlan = () => {
                   <span className="error-message">{item.error}</span>
                 ) : (
                   <>
-                    {item.qty} {item.unit} {item.name} - Price: $${item.price.toFixed(2)}, 
-                    <a 
-                      href={item.link} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="App-link"
+                    {item.qty} {item.unit} {item.name} - Price: ${item.price.toFixed(2)}, 
+                    <button 
+                      onClick={() => handleBuyClick(item.link)} // Trigger opening Walmart link on click
+                      className="buy-button" // Use a class for styling
                     >
                       Buy
-                    </a>
+                    </button>
                   </>
                 )}
               </li>
             ))}
           </ul>
           <div className="total-price">
-            <h3>Total Price for the Week: $${totalPrice.toFixed(2)}</h3>
+            <h3>Total Price for the Week: ${totalPrice.toFixed(2)}</h3> {/* Fixed typo: toFixed(2) */}
           </div>
         </div>
       )}

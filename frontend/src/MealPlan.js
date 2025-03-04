@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
 const MealPlan = () => {
@@ -7,29 +7,9 @@ const MealPlan = () => {
   const [healthOption, setHealthOption] = useState('Any'); // Default to "Any" for random health options
   const [mealPlan, setMealPlan] = useState([]);
   const [shoppingList, setShoppingList] = useState([]);
-  const [showRecipeText, setShowRecipeText] = useState({}); // State for recipe text visibility per day-meal
-  const [showIngredients, setShowIngredients] = useState({}); // State for ingredients visibility per day-meal
 
   // Days of the week, starting with Monday
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-
-  // Initialize visibility states when mealPlan, nights, or daysOfWeek changes
-  useEffect(() => {
-    console.log('Initializing visibility states:', { nights, mealPlan, daysOfWeek });
-    const initialRecipeText = {};
-    const initialIngredients = {};
-    daysOfWeek.slice(0, Math.min(nights, 7)).forEach((day, dayIndex) => {
-      if (mealPlan[day]) {
-        mealPlan[day].forEach((meal, mealIndex) => {
-          const key = `${day}-${mealIndex}`;
-          initialRecipeText[key] = false; // Default to hidden
-          initialIngredients[key] = false; // Default to hidden
-        });
-      }
-    });
-    setShowRecipeText(initialRecipeText);
-    setShowIngredients(initialIngredients);
-  }, [mealPlan, nights, daysOfWeek]); // Correct dependency array
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -62,7 +42,7 @@ const MealPlan = () => {
 
       // Fetch product details and add units
       const shoppingListData = await Promise.all(
-        Object.keys(ingredientCount).map(async (ingredient) => {
+        Object.keys(ingredientCount).map(async ingredient => {
           const response = await axios.get(`http://localhost:5000/api/products/${ingredient}`);
           const product = response.data;
           if (!product.error) {
@@ -70,8 +50,8 @@ const MealPlan = () => {
             let unit = 'unit'; // Default unit
             if (ingredient === 'pasta' || ingredient === 'rice') unit = 'lbs';
             if (ingredient === 'sauce' || ingredient === 'dressing' || ingredient === 'salsa' || ingredient === 'soy sauce') unit = 'ozs';
-            if (ingredient === 'beef' || ingredient === 'chicken') unit = 'lbs';
-            if (ingredient === 'lettuce' || ingredient === 'tomato' || ingredient === 'broccoli' || ingredient === 'onion') unit = 'unit';
+            if (ingredient === 'beef') unit = 'lbs';
+            if (ingredient === 'lettuce' || ingredient === 'tomato' || ingredient === 'broccoli') unit = 'unit';
 
             return {
               name: product.name,
@@ -81,7 +61,7 @@ const MealPlan = () => {
               link: product.link
             };
           }
-          return { error: `Not found in stock: ${ingredient}` }; // Added semicolon
+          return { error: `Not found in stock: ${ingredient}` };
         })
       );
       setShoppingList(shoppingListData.filter(item => item)); // Remove any undefined items
@@ -94,27 +74,6 @@ const MealPlan = () => {
   const totalPrice = shoppingList.reduce((total, item) => {
     return item.error ? total : total + (item.price || 0);
   }, 0);
-
-  // Toggle visibility for recipe text per day-meal
-  const toggleRecipeText = (key) => {
-    setShowRecipeText(prev => ({
-      ...prev,
-      [key]: !prev[key]
-    })); // Simplified to implicit return with braces
-  };
-
-  // Toggle visibility for ingredients per day-meal
-  const toggleIngredients = (key) => {
-    setShowIngredients(prev => ({
-      ...prev,
-      [key]: !prev[key]
-    })); // Simplified to implicit return with braces
-  };
-
-  // Function to open URL in a new tab
-  const handleOpenUrl = (url) => {
-    window.open(url, '_blank', 'noopener,noreferrer');
-  };
 
   return (
     <div className="App">
@@ -144,7 +103,6 @@ const MealPlan = () => {
             <option value="Italian">Italian</option>
             <option value="Mexican">Mexican</option>
             <option value="Healthy">Healthy</option>
-            <option value="Asian">Asian</option> {/* Added for variety */}
           </select>
         </label>
 
@@ -174,45 +132,17 @@ const MealPlan = () => {
               <div key={day} className="meal-day">
                 <h3>{day}</h3>
                 {mealPlan[day] && mealPlan[day].length > 0 ? (
-                  mealPlan[day].map((meal, mealIndex) => (
-                    <div key={mealIndex} className="recipe-card">
-                      <h4>{meal.name}</h4>
-                      {/* Button to toggle recipe text visibility */}
-                      <button 
-                        onClick={() => toggleRecipeText(`${day}-${mealIndex}`)}
-                        className="toggle-button"
-                      >
-                        {showRecipeText[`${day}-${mealIndex}`] ? 'Hide Recipe' : 'Show Recipe'}
-                      </button>
-                      {showRecipeText[`${day}-${mealIndex}`] && (
-                        <p className={`recipe-text ${showRecipeText[`${day}-${mealIndex}`] ? 'expanded' : ''}`}>
-                          {meal.recipeText}
-                        </p>
-                      )}
-                      {/* Button to toggle ingredients visibility */}
-                      <button 
-                        onClick={() => toggleIngredients(`${day}-${mealIndex}`)}
-                        className="toggle-button"
-                      >
-                        {showIngredients[`${day}-${mealIndex}`] ? 'Hide Ingredients' : 'Show Ingredients'}
-                      </button>
-                      {showIngredients[`${day}-${mealIndex}`] && (
-                        <ul className={`ingredient-list ${showIngredients[`${day}-${mealIndex}`] ? 'expanded' : ''}`}>
-                          {meal.ingredients.map((ingredient, i) => (
-                            <li key={i}>{ingredient}</li>
-                          ))}
-                        </ul>
-                      )}
-                      {/* Button for recipe card (replacing link) */}
-                      <button 
-                        onClick={() => handleOpenUrl(meal.recipeUrl)}
-                        className="recipe-link-button"
-                        aria-label={`View recipe card for ${meal.name}`}
-                      >
-                        View Recipe Card
-                      </button>
-                    </div>
-                  ))
+                  <ul>
+                    {mealPlan[day].map((meal, mealIndex) => (
+                      <li key={mealIndex}>
+                        {meal.name} - Ingredients: {meal.ingredients.join(', ')} - Style: {meal.style}
+                        {/* Placeholder for future recipe link */}
+                        <a href="#" className="recipe-link" onClick={(e) => e.preventDefault()}>
+                          [Link to Recipe - Coming Soon]
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
                 ) : (
                   <p>No meal planned for this day.</p>
                 )}
@@ -232,13 +162,14 @@ const MealPlan = () => {
                 ) : (
                   <>
                     {item.qty} {item.unit} {item.name} - Price: $${item.price.toFixed(2)}, 
-                    <button 
-                      onClick={() => handleOpenUrl(item.link)}
-                      className="buy-button"
-                      aria-label={`Buy ${item.name} at Walmart`}
+                    <a 
+                      href={item.link} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="App-link"
                     >
                       Buy
-                    </button>
+                    </a>
                   </>
                 )}
               </li>

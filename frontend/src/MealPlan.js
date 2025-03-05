@@ -3,8 +3,8 @@ import axios from 'axios';
 
 const MealPlan = () => {
   const [nights, setNights] = useState(1);
-  const [mealStyle, setMealStyle] = useState('Any'); // Default to "Any" for random styles
-  const [healthOption, setHealthOption] = useState('Any'); // Default to "Any" for random health options
+  const [adults, setAdults] = useState(1); // New state for number of adults
+  const [kids, setKids] = useState(0); // New state for number of kids
   const [mealPlan, setMealPlan] = useState([]);
   const [shoppingList, setShoppingList] = useState([]);
 
@@ -16,8 +16,10 @@ const MealPlan = () => {
     try {
       const response = await axios.post('http://localhost:5000/api/generate-meal-plan', {
         nights,
-        style: mealStyle,               // Send style preference (including "Any") to backend
-        health: healthOption,           // Send health preference (including "Any") to backend
+        adults, // Send number of adults to backend
+        kids,   // Send number of kids to backend
+        style: 'Any', // Ignore for now
+        health: 'Any' // Ignore for now
       });
       const meals = response.data;
 
@@ -34,29 +36,26 @@ const MealPlan = () => {
       setMealPlan(weeklyPlan);
 
       // Fetch product data for ingredients and aggregate quantities
-      const allIngredients = meals.flatMap(meal => meal.ingredients);
+      const allIngredients = meals.flatMap(meal => 
+        meal.ingredients.map(ing => ing) // Extract raw ingredients (e.g., "2 chicken")
+      );
       const ingredientCount = {}; // Track quantity of each ingredient
       allIngredients.forEach(ingredient => {
-        ingredientCount[ingredient] = (ingredientCount[ingredient] || 0) + 1; // Increment count
+        const [qty, ...rest] = ingredient.split(' '); // Split to get quantity and name
+        const name = rest.join(' ').toLowerCase().trim();
+        ingredientCount[name] = (ingredientCount[name] || 0) + (parseFloat(qty) || 1); // Sum quantities
       });
 
       // Fetch product details and add units
       const shoppingListData = await Promise.all(
-        Object.keys(ingredientCount).map(async (ingredient) => { // Added parentheses for clarity
+        Object.keys(ingredientCount).map(async (ingredient) => {
           const response = await axios.get(`http://localhost:5000/api/products/${ingredient}`);
           const product = response.data;
           if (!product.error) {
-            // Add units based on common grocery item assumptions (customize as needed)
-            let unit = 'unit'; // Default unit
-            if (ingredient === 'pasta' || ingredient === 'rice') unit = 'lbs';
-            if (ingredient === 'sauce' || ingredient === 'dressing' || ingredient === 'salsa' || ingredient === 'soy sauce') unit = 'ozs';
-            if (ingredient === 'beef') unit = 'lbs';
-            if (ingredient === 'lettuce' || ingredient === 'tomato' || ingredient === 'broccoli') unit = 'unit';
-
             return {
               name: product.name,
-              qty: ingredientCount[ingredient], // Number of times the ingredient appears
-              unit, // Add unit (e.g., lbs, ozs)
+              qty: ingredientCount[ingredient], // Use summed quantity
+              unit: product.unit, // Use unit from products
               price: product.price * ingredientCount[ingredient], // Total price for this ingredient
               link: product.link
             };
@@ -75,6 +74,11 @@ const MealPlan = () => {
     return item.error ? total : total + (item.price || 0);
   }, 0);
 
+  // Handle button click to open recipe link in a new tab
+  const handleRecipeClick = (url) => {
+    window.open(url, '_blank'); // Open recipe link in a new tab
+  };
+
   // Handle button click to open Walmart link in a new tab
   const handleBuyClick = (link) => {
     window.open(link, '_blank'); // Open Walmart link in a new tab
@@ -83,7 +87,7 @@ const MealPlan = () => {
   return (
     <div className="App">
       <h1>Weekly Meal Plan</h1>
-      {/* Main form for number of nights and preferences */}
+      {/* Main form for number of nights, adults, and kids */}
       <form onSubmit={handleSubmit}>
         <label style={{ marginRight: '10px' }}>
           Number of nights:
@@ -96,30 +100,57 @@ const MealPlan = () => {
           />
         </label>
 
-        {/* Meal style selection with "Any" option */}
+        {/* Number of adults selection */}
+        <label style={{ marginRight: '10px' }}>
+          Number of Adults:
+          <select
+            value={adults}
+            onChange={(e) => setAdults(parseInt(e.target.value))}
+            style={{ marginLeft: '5px', padding: '5px' }}
+          >
+            {Array.from({ length: 10 }, (_, i) => (
+              <option key={i + 1} value={i + 1}>{i + 1}</option>
+            ))}
+          </select>
+        </label>
+
+        {/* Number of kids selection */}
+        <label style={{ marginRight: '10px' }}>
+          Number of Kids:
+          <select
+            value={kids}
+            onChange={(e) => setKids(parseInt(e.target.value))}
+            style={{ marginLeft: '5px', padding: '5px' }}
+          >
+            {Array.from({ length: 10 }, (_, i) => (
+              <option key={i} value={i}>{i}</option>
+            ))}
+          </select>
+        </label>
+
+        {/* Meal style and health options (ignored for now, but kept for future use) */}
         <label style={{ marginRight: '10px' }}>
           Meal Style:
           <select
-            value={mealStyle}
-            onChange={(e) => setMealStyle(e.target.value)}
-            style={{ marginLeft: '5px', padding: '5px' }}
+            value={'Any'}
+            disabled // Disable for now
+            style={{ marginLeft: '5px', padding: '5px', opacity: 0.6 }}
           >
-            <option value="Any">Any</option>    {/* Added "Any" option for random styles */}
+            <option value="Any">Any</option>
             <option value="Italian">Italian</option>
             <option value="Mexican">Mexican</option>
             <option value="Healthy">Healthy</option>
           </select>
         </label>
 
-        {/* Health option selection with "Any" option */}
         <label>
           Health Option:
           <select
-            value={healthOption}
-            onChange={(e) => setHealthOption(e.target.value)}
-            style={{ marginLeft: '5px', padding: '5px' }}
+            value={'Any'}
+            disabled // Disable for now
+            style={{ marginLeft: '5px', padding: '5px', opacity: 0.6 }}
           >
-            <option value="Any">Any</option>    {/* Added "Any" option for random health options */}
+            <option value="Any">Any</option>
             <option value="Regular">Regular</option>
             <option value="Low-Carb">Low-Carb</option>
             <option value="Vegetarian">Vegetarian</option>
@@ -137,17 +168,37 @@ const MealPlan = () => {
               <div key={day} className="meal-day">
                 <h3>{day}</h3>
                 {mealPlan[day] && mealPlan[day].length > 0 ? (
-                  <ul>
-                    {mealPlan[day].map((meal, mealIndex) => (
-                      <li key={mealIndex}>
-                        {meal.name} - Ingredients: {meal.ingredients.join(', ')} - Style: {meal.style}
-                        {/* Placeholder for future recipe link (using span instead of a for accessibility) */}
-                        <span className="recipe-link">
-                          [Link to Recipe - Coming Soon]
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
+                  <div>
+                    <h4 className="meal-title">{mealPlan[day][0].name}</h4>
+                    <ul className="meal-ingredients">
+                      {mealPlan[day][0].ingredients.map((ingredient, ingIndex) => {
+                        const [qty, ...rest] = ingredient.split(' '); // Parse quantity and name
+                        const name = rest.join(' ');
+                        return (
+                          <li key={ingIndex} className="ingredient-item">
+                            {qty} {name}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                    <div className="recipe-buttons">
+                      <button 
+                        onClick={() => handleRecipeClick(mealPlan[day][0].recipeUrlMain)}
+                        className="recipe-button"
+                      >
+                        Main Dish Recipe
+                      </button>
+                      {mealPlan[day][0].recipeUrlSide && (
+                        <button 
+                          onClick={() => handleRecipeClick(mealPlan[day][0].recipeUrlSide)}
+                          className="recipe-button"
+                          style={{ marginLeft: '10px' }}
+                        >
+                          Side Dish Recipe
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 ) : (
                   <p>No meal planned for this day.</p>
                 )}
@@ -179,7 +230,7 @@ const MealPlan = () => {
             ))}
           </ul>
           <div className="total-price">
-            <h3>Total Price for the Week: ${totalPrice.toFixed(2)}</h3> {/* Fixed typo: toFixed(2) */}
+            <h3>Total Price for the Week: ${totalPrice.toFixed(2)}</h3>
           </div>
         </div>
       )}

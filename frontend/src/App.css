@@ -1,6 +1,6 @@
 /* Main app container styles with a refined dark theme */
 .App {
-  background: linear-gradient(135deg, rgb(2, 45, 59), rgb(5, 35, 45)); /* Dark teal gradient for depth */
+  background: linear-gradient(135deg, rgb(2, 45, 59), rgb(4, 25, 32)); /* Dark teal gradient for depth */
   min-height: 100vh;                /* Full viewport height */
   padding: 20px;                    /* Spacing around content */
   color: #ffffff;                   /* Default text color: white for contrast */
@@ -10,7 +10,7 @@
 
 /* Title heading with a gradient effect */
 h1 {
-  color: #3a46f3;                   /* Bright blue for titles */
+  color: #4551fc;                   /* Bright blue for titles */
   background: linear-gradient(45deg, #3a46f3, #5d6aff); /* Gradient for title */
   -webkit-background-clip: text;    /* Clip gradient to text */
   background-clip: text;            /* Clip gradient to text */
@@ -20,7 +20,7 @@ h1 {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* Subtle text shadow */
 }
 
-/* Button styles with a modern dark theme (for "Generate Meal Plan" and "Buy" buttons) */
+/* Button styles with a modern dark theme (for "Generate Meal Plan", "Buy", and "Recipe" buttons) */
 button {
   margin-left: 10px;
   padding: 8px 16px;                /* Increased padding for better touch targets */
@@ -30,7 +30,7 @@ button {
   border-radius: 5px;               /* Rounded corners for a modern look */
   cursor: pointer;                  /* Pointer cursor on hover */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
-  transition: background 0.3s, transform 0.2s; /* Smooth transitions */
+  transition: background 0.3s, transform 0.2s, box-shadow 0.3s; /* Smooth transitions */
 }
 
 button:hover {
@@ -51,6 +51,13 @@ button:active {
   font-size: 0.9em;                 /* Slightly smaller font for consistency with link size */
 }
 
+/* Specific styles for "Recipe" buttons in the meal calendar */
+.recipe-button {
+  margin-top: 10px;                 /* Space above recipe buttons */
+  padding: 6px 12px;                /* Slightly smaller padding for inline fit */
+  font-size: 0.9em;                 /* Slightly smaller font for consistency */
+}
+
 /* Input and select field styles with a dark theme */
 input, select {
   background-color: #222831;        /* Darker gray background for inputs/selects */
@@ -69,6 +76,12 @@ input:focus, select:focus {
   box-shadow: 0 0 5px rgba(93, 106, 255, 0.5); /* Glow effect on focus */
 }
 
+/* Disabled select styles */
+select:disabled {
+  opacity: 0.6;                     /* Dim disabled selects */
+  cursor: not-allowed;              /* Indicate non-interactivity */
+}
+
 /* Label styles with subtle enhancements */
 label {
   margin-right: 10px;               /* Spacing between labels */
@@ -76,29 +89,30 @@ label {
   font-weight: 500;                 /* Slightly bolder for readability */
 }
 
-/* Calendar layout for meal plan */
+/* Calendar layout for meal plan with enhanced effects */
 .meal-calendar {
-  display: flex;                    /* Use flexbox for horizontal layout */
-  flex-wrap: wrap;                  /* Allow wrapping on smaller screens */
+  display: grid;                    /* Use CSS Grid for better control and responsiveness */
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Auto-fit columns, min 150px, max equal width */
   gap: 20px;                        /* Space between day columns */
   justify-content: flex-start;      /* Align days to the left */
   margin-top: 20px;                 /* Space above the calendar */
+  transition: all 0.3s ease;        /* Smooth transitions for layout changes */
 }
 
-/* Individual day column */
+/* Individual day column with enhanced styling */
 .meal-day {
-  flex: 1;                          /* Equal width for each day, but allow shrinking */
-  min-width: 150px;                 /* Minimum width for each day column */
   background: linear-gradient(135deg, #2d3642, #222831); /* Dark gradient for days */
   padding: 15px;                    /* Increased padding for better spacing */
   border-radius: 8px;               /* Larger rounded corners for a modern look */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* Enhanced shadow for depth */
-  transition: transform 0.3s, box-shadow 0.3s; /* Smooth transitions */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease; /* Smooth transitions */
+  opacity: 0.95;                    /* Slight transparency for depth */
 }
 
 .meal-day:hover {
-  transform: translateY(-2px);      /* Slight lift on hover */
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5); /* Enhanced shadow on hover */
+  transform: translateY(-4px);      /* Larger lift on hover for emphasis */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6); /* Enhanced shadow on hover */
+  opacity: 1;                       /* Full opacity on hover */
 }
 
 /* Day titles (e.g., Monday, Tuesday) */
@@ -107,26 +121,44 @@ label {
   margin-bottom: 15px;              /* Increased space below day name */
   text-align: center;               /* Center day names */
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* Subtle text shadow */
+  transition: color 0.3s ease;      /* Smooth color transition */
 }
 
-/* Meal list styles within each day */
-.meal-day ul {
-  list-style-type: none;            /* Remove default bullet points */
-  padding-left: 0;                  /* Remove default padding */
+.meal-day:hover h3 {
+  color: #5d6aff;                   /* Lighter blue on hover */
 }
 
-/* Recipe link placeholder style (now for <span> instead of <a>) */
-.recipe-link {
-  color: #61fbae;                   /* Light green for recipe links */
-  text-decoration: none;            /* Remove underline */
-  margin-left: 5px;                 /* Space before the link */
-  cursor: pointer;                  /* Pointer cursor to indicate interactivity */
-  transition: color 0.3s;           /* Smooth color transition */
+/* Meal title styles */
+.meal-title {
+  color: #ffffff;                   /* White for meal titles */
+  margin-bottom: 10px;              /* Space below meal title */
+  font-size: 1.1em;                 /* Slightly larger font for emphasis */
+  text-align: center;               /* Center meal titles */
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* Subtle text shadow */
 }
 
-.recipe-link:hover {
-  color: #8cffb4;                   /* Slightly lighter green on hover */
-  text-decoration: underline;       /* Underline on hover for interactivity */
+/* Meal ingredients list styles for better readability */
+.meal-ingredients {
+  list-style-type: disc;            /* Use bullets for readability */
+  padding-left: 20px;               /* Add padding for bullets */
+  margin-bottom: 15px;              /* Space below ingredients list */
+  color: #a8b2c1;                   /* Light gray for ingredients, less prominent */
+}
+
+.ingredient-item {
+  margin-bottom: 5px;               /* Space between ingredient items */
+  transition: color 0.3s ease;      /* Smooth color transition */
+}
+
+.ingredient-item:hover {
+  color: #ffffff;                   /* White on hover for emphasis */
+}
+
+/* Recipe buttons container */
+.recipe-buttons {
+  display: flex;                    /* Use flexbox for button layout */
+  justify-content: center;          /* Center buttons horizontally */
+  gap: 10px;                        /* Space between recipe buttons */
 }
 
 /* Shopping list styles */
@@ -142,12 +174,14 @@ label {
   margin-bottom: 15px;              /* Increased space between list items */
   border-radius: 8px;               /* Larger rounded corners */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* Enhanced shadow for depth */
-  transition: transform 0.3s, box-shadow 0.3s; /* Smooth transitions */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease; /* Smooth transitions */
+  opacity: 0.95;                    /* Slight transparency for depth */
 }
 
 .shopping-list li:hover {
   transform: translateY(-2px);      /* Slight lift on hover */
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5); /* Enhanced shadow on hover */
+  opacity: 1;                       /* Full opacity on hover */
 }
 
 .shopping-list .error-message {
@@ -162,12 +196,14 @@ label {
   padding: 15px;                    /* Padding inside the total box */
   border-radius: 8px;               /* Larger rounded corners */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* Enhanced shadow */
-  transition: transform 0.3s, box-shadow 0.3s; /* Smooth transitions */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease; /* Smooth transitions */
+  opacity: 0.95;                    /* Slight transparency for depth */
 }
 
 .total-price:hover {
   transform: translateY(-2px);      /* Slight lift on hover */
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5); /* Enhanced shadow on hover */
+  opacity: 1;                       /* Full opacity on hover */
 }
 
 .total-price h3 {

@@ -1,63 +1,92 @@
 const express = require('express');
 const cors = require('cors');
+const axios = require('axios'); // Already installed
 const app = express();
 const PORT = 5000;
 
 app.use(cors());
 app.use(express.json());
 
-// Sample recipes with styles, health options, and Walmart-available ingredients
-const recipes = [
-  { 
-    name: 'Pasta Primavera', 
-    ingredients: ['pasta', 'broccoli', 'tomato', 'sauce'], 
-    style: 'Healthy', 
-    health: 'Vegetarian', 
-    recipeText: 'Cook pasta according to package instructions. Sauté broccoli and tomatoes in olive oil, add sauce, and mix with pasta. Serve warm.', 
-    recipeUrl: 'https://www.example.com/pasta-primavera' // Simulated recipe card link
-  },
-  { 
-    name: 'Beef Tacos', 
-    ingredients: ['tortillas', 'beef', 'salsa', 'lettuce'], 
-    style: 'Mexican', 
-    health: 'Regular', 
-    recipeText: 'Brown beef in a skillet, season with garlic salt. Warm tortillas, fill with beef, salsa, and lettuce. Serve with a side of rice.', 
-    recipeUrl: 'https://www.example.com/beef-tacos'
-  },
-  { 
-    name: 'Chicken Fried Rice', 
-    ingredients: ['rice', 'chicken', 'soy sauce', 'onion'], 
-    style: 'Asian', 
-    health: 'Regular', 
-    recipeText: 'Cook rice and set aside. Sauté chicken and onions, add rice and soy sauce, stir-fry until heated through.', 
-    recipeUrl: 'https://www.example.com/chicken-fried-rice'
-  }
-];
+// Spoonacular API key (replace with your actual key)
+const SPOONACULAR_API_KEY = 'YOUR_API_KEY'; // Replace with your Spoonacular API key
 
-// Walmart-available ingredients (simplified from your products)
-const walmartIngredients = {
-  pasta: true, sauce: true, broccoli: true, tomato: true, tortillas: true, 
-  beef: true, salsa: true, lettuce: true, rice: true, chicken: true, 
-  'soy sauce': true, onion: true
-};
-
-const generateMealPlan = (nights, style, health) => {
+// Function to fetch dinner recipes from Spoonacular (main + side for each day)
+const fetchDinnerRecipes = async (days, adults, kids) => {
   const mealPlan = [];
-  for (let i = 0; i < nights; i++) {
-    // Filter recipes based on style, health, and Walmart availability
-    const filteredRecipes = recipes.filter(recipe => 
-      (style === 'Any' || recipe.style === style) && 
-      (health === 'Any' || recipe.health === health) &&
-      recipe.ingredients.every(ingredient => walmartIngredients[ingredient] || walmartIngredients[ingredient.replace(' ', '+')])
-    );
-    if (filteredRecipes.length === 0) {
-      return []; // No recipes match the criteria
+  for (let i = 0; i < Math.min(days, 7); i++) { // Limit to 7 days
+    try {
+      // Fetch a random dinner recipe (main dish)
+      const mainResponse = await axios.get(`https://api.spoonacular.com/recipes/random?apiKey=${SPOONACULAR_API_KEY}&number=1&tags=dinner`);
+      const mainRecipe = mainResponse.data.recipes[0];
+      
+      // Fetch a random side dish
+      const sideResponse = await axios.get(`https://api.spoonacular.com/recipes/random?apiKey=${SPOONACULAR_API_KEY}&number=1&tags=side`);
+      const sideRecipe = sideResponse.data.recipes[0];
+
+      // Combine main and side into a single dinner
+      const dinner = {
+        name: `${mainRecipe.title} with ${sideRecipe.title}`,
+        ingredients: [
+          ...mainRecipe.extendedIngredients.map(ing => ing.name),
+          ...sideRecipe.extendedIngredients.map(ing => ing.name)
+        ],
+        style: 'Any', // Default style (ignored for now)
+        health: 'Any', // Default health (ignored for now)
+        recipeUrlMain: mainRecipe.sourceUrl, // URL for main dish
+        recipeUrlSide: sideRecipe.sourceUrl, // URL for side dish
+        recipeTextMain: mainRecipe.instructions, // Instructions for main
+        recipeTextSide: sideRecipe.instructions // Instructions for side
+      };
+
+      // Adjust ingredient quantities based on adults and kids (simplified scaling)
+      const totalPeople = adults + kids;
+      if (totalPeople > 1) {
+        dinner.ingredients = dinner.ingredients.map(ing => {
+          // Simulate scaling ingredients (e.g., double for 2+ people, adjust as needed)
+          const baseQty = 1; // Assume 1 unit per ingredient per person
+          const scaledQty = baseQty * totalPeople;
+          return `${scaledQty} ${ing}`; // Return scaled quantity with ingredient name
+        });
+      }
+
+      // Normalize ingredient names to match Walmart keys (simplified mapping)
+      const normalizedIngredients = dinner.ingredients.map(ing => {
+        const [qty, ...rest] = ing.split(' ');
+        const name = rest.join(' ').toLowerCase().replace(/[^a-zA-Z\s]/g, '').trim();
+        // Map Spoonacular names to Walmart names (basic mapping—expand as needed)
+        const walmartName = normalizeIngredient(name);
+        return `${qty} ${walmartName}`;
+      });
+
+      dinner.ingredients = normalizedIngredients;
+
+      mealPlan.push(dinner);
+    } catch (error) {
+      console.error('Error fetching recipes:', error);
+      return []; // Fallback if API fails
     }
-    const randomIndex = Math.floor(Math.random() * filteredRecipes.length);
-    mealPlan.push(filteredRecipes[randomIndex]);
   }
   return mealPlan;
 };
+
+// Helper function to normalize Spoonacular ingredients to match Walmart keys
+function normalizeIngredient(ingredient) {
+  const mappings = {
+    'chicken breast': 'chicken',
+    'white rice': 'rice',
+    'broccoli florets': 'broccoli',
+    'tomato': 'tomato',
+    'pasta': 'pasta',
+    'beef': 'beef',
+    'tortilla': 'tortillas',
+    'salsa': 'salsa',
+    'lettuce': 'lettuce',
+    'soy sauce': 'soy sauce',
+    'onion': 'onion'
+    // Add more mappings as needed based on Spoonacular responses
+  };
+  return mappings[ingredient] || ingredient; // Default to original if no mapping exists
+}
 
 app.get('/', (req, res) => {
   res.send('Backend is running');
@@ -67,9 +96,9 @@ app.get('/api/meals', (req, res) => {
   res.json({ message: 'Sample meal data' });
 });
 
-app.post('/api/generate-meal-plan', (req, res) => {
-  const { nights, style = 'Any', health = 'Any' } = req.body; // Default to 'Any' if not specified
-  const mealPlan = generateMealPlan(nights, style, health);
+app.post('/api/generate-meal-plan', async (req, res) => {
+  const { nights, style = 'Any', health = 'Any', adults = 1, kids = 0 } = req.body; // Default to 1 adult, 0 kids
+  const mealPlan = await fetchDinnerRecipes(nights, adults, kids);
   res.json(mealPlan);
 });
 
